@@ -33,7 +33,11 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 app.get('/', function (req, res) {
-    res.sendFile(path.join(__dirname, "index.html"));
+    res.sendFile(path.join(__dirname, "index3.html"));
+  });
+
+  app.get('/css/stylesheet3.css', function (req, res) {
+    res.sendFile(path.join(__dirname, "css/stylesheet3.css"));
   });
 
 app.get('/tankdaten_erfassen/get-letzter-tankvorgang', function (req, res) {

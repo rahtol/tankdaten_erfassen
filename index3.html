@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-compatible" content="ie-edge" />
+        <link rel="stylesheet" href="css/stylesheet3.css"/>
+        <title>Tankbeleg erfassen</title>
+    </head>
+    <script>
+    </script>
+    <body>
+        <div class="level1">
+            <div class="level2-1">
+                <h2>Tankbeleg erfassen</h2>                
+            </div>
+            <div class="level2-2">
+                <img src='images/111.14537851.jpg.14537862.jpg' alt="Hier sollte eigentlich eine schicke Tanksäule zu sehen sein.">
+            </div>
+            <div class="input-area">
+                <div>
+                    <label>Datum</label>
+                </div>
+                <div>
+                    <input type="date" id='_datum'/>
+                </div>
+                <div>
+                    <label>Km-Stand</label>
+                </div>
+                <div>
+                    <input type="number" id='_kmStand'/>
+                </div>
+                <div>
+                    <label>Liter</label>
+                </div>
+                <div class="liter-vollgetankt">
+                    <input type="number" autocomplete="off" required step="0.01" min="5.0" max="70.0" id='_liter'/>
+                    <div>
+                        <input type="checkbox" id="_vollgetankt" checked>
+                        <label for ="_vollgetankt">vollgetankt</label> 
+                    </div>
+                </div>
+                <div>
+                    <label>Betrag</label>
+                </div>
+                <div>
+                    <input type="number" id='_betrag'/>
+                    <i>€</i>
+                </div>
+                <div>
+                    <label>Literpreis</label>
+                </div>
+                <div>
+                    <input type="number" id='_literpreis'/>
+                    <i>ct/l</i>
+                </div>
+                <div>
+                    <label>Tankstelle</label>
+                </div>
+                <div>
+                    <input type="text" id='_tankstelle'/>
+                </div>
+                <div>
+                    <label>Sorte</label>
+                </div>
+                <div class="sorte-e5-e10">
+                    <div>
+                        <input type="radio" id="_E5" name="_sorte" value="E5" checked>
+                        <label for="_E5">E5</label>
+                    </div>
+                      
+                    <div>
+                        <input type="radio" id="_E10" name="_sorte" value="E10">
+                        <label for="_E10">E10</label>
+                    </div>
+                </div>
+           </div>
+            <div class="level2-4">
+                <button>WERTE ÜBERNEHMEN</button>
+            </div>
+            <div class="level2-5">
+                <span>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque facere nemo cum incidunt, quis itaque facilis, commodi ut nostrum quisquam consequatur beatae rerum eaque illo dicta! Dignissimos natus voluptatibus iure!</span>    
+            </div>
+        </div>
+   </body>
+</html>
