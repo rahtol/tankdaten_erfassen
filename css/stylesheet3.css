@@ -26,7 +26,7 @@ body{
 }
 
 img {
-    width: 400px;
+    width: 390px;
  /*   height: 287px; */
     display: block;
 }
@@ -46,6 +46,10 @@ img {
 
 .input-area > div > input[type="number"] {
     width: 6em;
+}
+
+input[type="date" i]{
+    font-family: sans-serif;
 }
 
 #_tankstelle {

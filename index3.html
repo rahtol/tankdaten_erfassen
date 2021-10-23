@@ -8,7 +8,65 @@
         <title>Tankbeleg erfassen</title>
     </head>
     <script>
-    </script>
+         Date.prototype.toDateInputValue = (function() {
+            var local = new Date(this);
+            local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+            return local.toJSON().slice(0,10);
+        });
+        
+        document.addEventListener('DOMContentLoaded', (event) => {
+            input_datum = document.getElementById('_datum');
+            input_datum.value = new Date().toDateInputValue();
+        });
+        
+        (async function init() {
+            const response = await fetch('/tankdaten_erfassen/get-letzter-tankvorgang');
+            console.log("response", response);
+            const response_data = await response.json();
+            console.log(JSON.stringify(response_data));
+            document.getElementById('_kmStand').setAttribute('placeholder', response_data.recordset[0].kmStand);
+            document.getElementById('_liter').setAttribute('placeholder', response_data.recordset[0].Liter);
+            document.getElementById('_betrag').setAttribute('placeholder', response_data.recordset[0].Betrag);
+            document.getElementById('_literpreis').setAttribute('placeholder', response_data.recordset[0].Literpreis);
+            document.getElementById('_tankstelle').setAttribute('placeholder', response_data.recordset[0].Tankstelle);
+        })();
+
+        
+        async function handleWerteSpeichern() {
+            const payload = {
+                Datum: document.getElementById('_datum').value, 
+                kmStand: document.getElementById('_kmStand').value, 
+                Liter: document.getElementById('_liter').value, 
+                vollgetankt: document.getElementById('_vollgetankt').checked, 
+                Betrag: document.getElementById('_betrag').value, 
+                Literpreis: document.getElementById('_literpreis').value, 
+                Tankstelle: document.getElementById('_tankstelle').value, 
+                Sorte: document.querySelector('input[name="_sorte"]:checked').value
+            };
+            console.log(JSON.stringify(payload));
+            
+            const response = await fetch('tankdaten_erfassen/update', {
+                method: "POST",
+                headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+            if (response.ok) {
+                const jsonResponse = await response.json();
+                console.log(jsonResponse)
+                response_div = document.getElementById('response');
+                response_div.innerHTML = '<p>' + JSON.stringify(jsonResponse) + '</p>';
+                response_div.style.display = 'block';
+            }
+            else {
+            response_div = document.getElementById('response');
+            response_text = await response.text();
+            document.write(response_text);
+            }
+        }
+   </script>
     <body>
         <div class="level1">
             <div class="level2-1">
@@ -28,7 +86,7 @@
                     <label>Km-Stand</label>
                 </div>
                 <div>
-                    <input type="number" id='_kmStand'/>
+                    <input type="number" id='_kmStand' autocomplete="off" required step="1.0" min="4" max="299999"/>
                 </div>
                 <div>
                     <label>Liter</label>
@@ -44,14 +102,14 @@
                     <label>Betrag</label>
                 </div>
                 <div>
-                    <input type="number" id='_betrag'/>
+                    <input type="number" id='_betrag' autocomplete="off" required step="0.01" min="5.0" max="120.0"/>
                     <i>€</i>
                 </div>
                 <div>
                     <label>Literpreis</label>
                 </div>
                 <div>
-                    <input type="number" id='_literpreis'/>
+                    <input type="number" id='_literpreis' autocomplete="off" step="0.1" min="120.0" max="220.0"/>
                     <i>ct/l</i>
                 </div>
                 <div>
@@ -76,7 +134,7 @@
                 </div>
            </div>
             <div class="level2-4">
-                <button>WERTE ÜBERNEHMEN</button>
+                <button onclick="handleWerteSpeichern()">WERTE ÜBERNEHMEN</button>
             </div>
             <div class="level2-5">
                 <span>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque facere nemo cum incidunt, quis itaque facilis, commodi ut nostrum quisquam consequatur beatae rerum eaque illo dicta! Dignissimos natus voluptatibus iure!</span>    
