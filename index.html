@@ -1,0 +1,177 @@
+<html lang="en">
+    <head>
+        <title>Tankdaten erfassen</title>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+        <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    </head>
+
+    <style>
+        img {
+            width: 328px;
+            height: 287px;
+            display: block;
+            margin-bottom: 40px;
+            margin-left: 36px;
+        }
+        .container {
+            margin: 40px auto;
+            width: 80%;
+        }
+        hr {
+            width: 400px;
+            margin-left: 0;
+        }
+        .aform  { display: table;      }
+        hr    { display: table-row;  }	
+        label { 
+            padding-right: 15px
+        }
+        label, input { 
+            display: table-cell;
+        }
+        .my-label {
+            font-size: 16px;
+        }
+        #my-button {
+            margin-top: 40px;
+            margin-left: 100px;
+        }
+        #input-datum {
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+        .response{
+            display:none;
+            border-style: solid;
+            margin-top: 50px;
+            width: 328px;
+        }
+        input[type="date" i]{
+            font-family: sans-serif;
+        }
+   </style>
+
+    <script>
+        Date.prototype.toDateInputValue = (function() {
+            var local = new Date(this);
+            local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+            return local.toJSON().slice(0,10);
+        });
+        
+        document.addEventListener('DOMContentLoaded', (event) => {
+            input_datum = document.getElementById('_datum');
+            input_datum.value = new Date().toDateInputValue();
+        });
+        
+        (async function init() {
+            const response = await fetch('/tankdaten_erfassen/get-letzter-tankvorgang');
+            console.log("response", response);
+            const response_data = await response.json();
+            console.log(JSON.stringify(response_data));
+            document.getElementById('kmStand').getElementsByClassName('mdl-textfield__label')[0].textContent = response_data.recordset[0].kmStand;
+            document.getElementById('Liter').getElementsByClassName('mdl-textfield__label')[0].textContent = response_data.recordset[0].Liter;
+            document.getElementById('Betrag').getElementsByClassName('mdl-textfield__label')[0].textContent = response_data.recordset[0].Betrag;
+            document.getElementById('Literpreis').getElementsByClassName('mdl-textfield__label')[0].textContent = response_data.recordset[0].Literpreis;
+            document.getElementById('Tankstelle').getElementsByClassName('mdl-textfield__label')[0].textContent = response_data.recordset[0].Tankstelle;
+            document.getElementById('Sorte').getElementsByClassName('mdl-textfield__label')[0].textContent = response_data.recordset[0].Sorte;
+        })();
+
+        
+        async function handleWerteSpeichern() {
+            const payload = {
+                Datum: document.getElementById('_datum').value, 
+                kmStand: document.getElementById('_kmStand').value, 
+                Liter: document.getElementById('_liter').value, 
+                vollgetankt: document.getElementById('_vollgetankt').checked, 
+                Betrag: document.getElementById('_betrag').value, 
+                Literpreis: document.getElementById('_literpreis').value, 
+                Tankstelle: document.getElementById('_tankstelle').value, 
+                Sorte: document.getElementById('_sorte').value, 
+            };
+            console.log(JSON.stringify(payload));
+            
+            const response = await fetch('tankdaten_erfassen/update', {
+                method: "POST",
+                headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+            if (response.ok) {
+                const jsonResponse = await response.json();
+                console.log(jsonResponse)
+                response_div = document.getElementById('response');
+                response_div.innerHTML = '<p>' + JSON.stringify(jsonResponse) + '</p>';
+                response_div.style.display = 'block';
+            }
+            else {
+            response_div = document.getElementById('response');
+            response_text = await response.text();
+            document.write(response_text);
+            }
+        }
+    </script>
+
+    <body>
+        <div class='container' id='container-edt'>
+            <h1>Tankdaten erfassen</h1>
+            <img src='images/111.14537851.jpg.14537862.jpg' alt="Hier sollte eigentlich eine schicke Tanksäule zu sehen sein.">
+            <div class='aform' id='input-form'>
+                <label class='my-label'>Datum: </label>
+                <input type="date" name='input-datum' id='_datum' />
+                <hr />
+                <label class='my-label'>km-Stand: </label>
+                <div class="mdl-textfield mdl-js-textfield" id="kmStand">
+                    <input class="mdl-textfield__input" type="number" id="_kmStand" pattern="[1-9][0-9][0-9][0-9][0-9][0-9]?">
+                    <label class="mdl-textfield__label" for="_kmStand"></label>
+                    <span class="mdl-textfield__error">5-6 stellige ganze Zahl</span>
+                </div>
+                <hr />    
+                <label class='my-label'>Liter [l]: </label>
+                <div class="mdl-textfield mdl-js-textfield" id="Liter">
+                    <input class="mdl-textfield__input" type="number" id="_liter" step="0.01" min="5.0" max="70.0">
+                    <label class="mdl-textfield__label" for="_liter"></label>
+                    <span class="mdl-textfield__error">1-2 Vorkommastellen, 2 Nachkommastellen</span>
+                </div>
+                <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="_vollgetankt">
+                    <input type="checkbox" id="_vollgetankt" class="mdl-checkbox__input" checked>
+                    <span class="mdl-checkbox__label">vollgetankt</span>
+                </label>
+                <hr />    
+                <label class='my-label'>Betrag [€]: </label>
+                <div class="mdl-textfield mdl-js-textfield" id="Betrag">
+                    <input class="mdl-textfield__input" type="number" id="_betrag" step="0.01" min="5.0" max="120.0"">
+                    <label class="mdl-textfield__label" for="_betrag"></label>
+                    <span class="mdl-textfield__error">1-3 Vorkommastellen, 2 Nachkommastellen</span>
+                </div>
+                <hr />    
+                <label class='my-label'>Literpreis [ct/l]: </label>
+                <div class="mdl-textfield mdl-js-textfield" id="Literpreis">
+                    <input class="mdl-textfield__input" type="number" id="_literpreis" step="0.1" min="120.0" max="220.0"">
+                    <label class="mdl-textfield__label" for="_literpreis"></label>
+                    <span class="mdl-textfield__error">3 Vorkommastellen, 1 Nachkommastelle</span>
+                </div>
+                <hr />    
+                <label class='my-label'>Tankstelle: </label>
+                <div class="mdl-textfield mdl-js-textfield" id="Tankstelle">
+                    <input class="mdl-textfield__input" type="text" id="_tankstelle">
+                    <label class="mdl-textfield__label" for="_tankstelle"></label>
+                </div>
+                <hr />    
+                <label class='my-label'>Sorte: </label>
+                <div class="mdl-textfield mdl-js-textfield" id="Sorte">
+                    <input class="mdl-textfield__input" type="text" id="_sorte">
+                    <label class="mdl-textfield__label" for="_sorte"></label>
+                </div>
+                <hr />
+
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" id='my-button' onclick="handleWerteSpeichern()">
+                    Werte übernehmen
+                </button>
+            </div>
+        </div>
+        <div class='response' id='response'></div>
+    </body>
+</html>

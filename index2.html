@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-compatible" content="ie-edge" />
+        <link rel="stylesheet" href="./style2.css"/>
+        <link rel="stylesheet" href="./style3.css"/>
+        <title>Tankbeleg erfassen</title>
+    </head>
+    <script>
+        Date.prototype.toDateInputValue = (function() {
+            var local = new Date(this);
+            local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+            return local.toJSON().slice(0,10);
+        });
+        
+        document.addEventListener('DOMContentLoaded', (event) => {
+            var datum = document.getElementById('datum');
+            datum.value = new Date().toDateInputValue();
+        });
+    </script>
+    <body>
+        <h1>Tankbeleg erfassen</h1>
+        <img src='images/111.14537851.jpg.14537862.jpg' width='400px' alt="657882_poster_l.jpg">
+
+        <div class=input-area>
+            <div class="form">
+                <input type="date" name="Datum" id='datum' autocomplete="off" required placeholder=" " />
+                <label for="Datum" class="label-name" >
+                    <span class="content-name">Datum</span>
+                </label>
+            </div>
+             <div class="form">
+                <input type="text" name="km-Stand" autocomplete="off" required placeholder=" " pattern="[1-9][0-9][0-9][0-9][0-9][0-9]?"/>
+                <label for="km-Stand" class="label-name" >
+                    <span class="content-name">km-Stand</span>
+                </label>
+            </div>
+            <div class="form">
+                <input type="text" name="Liter" autocomplete="off" required placeholder=" " />
+                <label for="Liter" class="label-name" >
+                    <span class="content-name">Liter [L]</span>
+                </label>
+            </div>
+            <div class="vollgetankt">
+                <input type="checkbox" id="vollgetankt" class="my-checkbox" checked>
+                <span class="my-checkbox-label">vollgetankt</span>
+            </div>
+            <div class="form">
+                <input type="text" name="Betrag" autocomplete="off" required placeholder=" " />
+                <label for="Betrag" class="label-name" >
+                    <span class="content-name">Betrag [€]</span>
+                </label>
+            </div>
+            <div class="form">
+                <input type="text" name="Literpreis" autocomplete="off" required placeholder=" " />
+                <label for="Literpreis" class="label-name" >
+                    <span class="content-name">Literpreis [ct/L]</span>
+                </label>
+            </div>
+            <div class="form Tankstelle">
+                <input type="text" name="Tankstelle" autocomplete="off" required placeholder=" " />
+                <label for="Tankstelle" class="label-name" >
+                    <span class="content-name">Tankstelle</span>
+                </label>
+            </div>
+        </div>
+        <button class="my-button" id='my-button'>
+            WERTE ÜBERNEHMEN
+        </button>
+   </body>
+</html>
