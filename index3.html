@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta http-equiv="X-UA-compatible" content="ie-edge" />
-        <link rel="stylesheet" href="css/stylesheet3.css"/>
+        <link rel="stylesheet" href="stylesheet3.css"/>
         <title>Tankbeleg erfassen</title>
     </head>
     <script>
@@ -31,6 +31,15 @@
             document.getElementById('_tankstelle').setAttribute('placeholder', response_data.recordset[0].Tankstelle);
         })();
 
+        async function showError(msg) {
+            let msg_area = document.getElementById('msg-area');
+            msg_area.textContent = msg;
+            msg_area.style.backgroundColor='red'
+            await setTimeout(function(){
+                msg_area.textContent = 'Dateneingabe.';
+                msg_area.style.backgroundColor='greenyellow'
+            }, 3000);
+        }
         
         async function handleWerteSpeichern() {
             const payload = {
@@ -44,6 +53,23 @@
                 Sorte: document.querySelector('input[name="_sorte"]:checked').value
             };
             console.log(JSON.stringify(payload));
+
+            if (document.querySelector('input[id="_kmStand"]:invalid')) {
+                showError ("Eingabe 'Km-Stand' fehlerhaft!");
+                return;
+            }
+            if (document.querySelector('input[id="_liter"]:invalid')) {
+                showError ("Eingabe 'Liter' fehlerhaft!");
+                return;
+            }
+            if (document.querySelector('input[id="_betrag"]:invalid')) {
+                showError ("Eingabe 'Betrag' fehlerhaft!");
+                return;
+            }
+            if (document.querySelector('input[id="_literpreis"]:invalid')) {
+                showError ("Eingabe 'Literpreis' fehlerhaft!");
+                return;
+            }
             
             const response = await fetch('tankdaten_erfassen/update', {
                 method: "POST",
@@ -56,14 +82,15 @@
             if (response.ok) {
                 const jsonResponse = await response.json();
                 console.log(jsonResponse)
-                response_div = document.getElementById('response');
-                response_div.innerHTML = '<p>' + JSON.stringify(jsonResponse) + '</p>';
-                response_div.style.display = 'block';
+                let msg_area = document.getElementById('msg-area');
+                msg_area.textContent = JSON.stringify(jsonResponse);
+                msg_area.style.backgroundColor = 'green';
             }
             else {
-            response_div = document.getElementById('response');
-            response_text = await response.text();
-            document.write(response_text);
+                let msg_area = document.getElementById('msg-area');
+                let response_text = await response.text();
+                msg_area.textContent = response_text;
+                msg_area.style.backgroundColor = 'red';
             }
         }
    </script>
@@ -109,7 +136,7 @@
                     <label>Literpreis</label>
                 </div>
                 <div>
-                    <input type="number" id='_literpreis' autocomplete="off" step="0.1" min="120.0" max="220.0"/>
+                    <input type="number" id='_literpreis' autocomplete="off" required step="0.1" min="120.0" max="220.0"/>
                     <i>ct/l</i>
                 </div>
                 <div>
@@ -136,8 +163,8 @@
             <div class="level2-4">
                 <button onclick="handleWerteSpeichern()">WERTE ÜBERNEHMEN</button>
             </div>
-            <div class="level2-5">
-                <span>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque facere nemo cum incidunt, quis itaque facilis, commodi ut nostrum quisquam consequatur beatae rerum eaque illo dicta! Dignissimos natus voluptatibus iure!</span>    
+            <div class="level2-5" id='msg-area'>
+                <span >Dateneingabe.</span>    
             </div>
         </div>
    </body>

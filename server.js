@@ -6,8 +6,8 @@ let bodyParser = require('body-parser');
 //var https = require('https');
 var http = require('http');
 
-var privateKey = fs.readFileSync('../certificate/key.pem');
-var certificate = fs.readFileSync('../certificate/cert.pem');
+var privateKey = fs.readFileSync('./certificate/key.pem');
+var certificate = fs.readFileSync('./certificate/cert.pem');
 var credentials = {key: privateKey, cert: certificate};
 
 let app = express();
@@ -32,12 +32,10 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
+app.use(express.static('css'))
+
 app.get('/', function (req, res) {
     res.sendFile(path.join(__dirname, "index3.html"));
-  });
-
-  app.get('/css/stylesheet3.css', function (req, res) {
-    res.sendFile(path.join(__dirname, "css/stylesheet3.css"));
   });
 
 app.get('/tankdaten_erfassen/get-letzter-tankvorgang', function (req, res) {
@@ -74,8 +72,8 @@ app.post('/tankdaten_erfassen/update', function (req, res, next) {
   console.log(userObj);
 
   let sql_query = [];
-  sql_query.push(`INSERT INTO Tankliste (Datum, [Km-Stand], Liter, vollgetankt, Betrag, [ct/l], Tankstelle, Sorte) VALUES (`);
-  sql_query.push(`'${userObj.Datum}', `);
+  sql_query.push(`INSERT INTO Tankliste (FahrzeugID, Datum, [Km-Stand], Liter, vollgetankt, Betrag, [ct/l], Tankstelle, Sorte) VALUES (1, `);
+  sql_query.push(`convert(datetime,'${userObj.Datum} 15:00:00', 20), `);
   sql_query.push(`'${userObj.kmStand}', `);
   sql_query.push(`'${userObj.Liter}', `);
   sql_query.push(`'${userObj.vollgetankt}', `);
@@ -83,11 +81,10 @@ app.post('/tankdaten_erfassen/update', function (req, res, next) {
   sql_query.push(`'${userObj.Literpreis}', `);
   sql_query.push(`'${userObj.Tankstelle}', `);
   sql_query.push(`'${userObj.Sorte}'`);
-  sql_query.push(')\n');
+  sql_query.push(');\n');
   sql_query = sql_query.join('');
   console.log(sql_query);
 
-/*
   (async function () {
     try {
       let pool = await SqlClient.connect(config)
@@ -100,7 +97,6 @@ app.post('/tankdaten_erfassen/update', function (req, res, next) {
       next(err);
     }
   })()
-*/
 
 });
 

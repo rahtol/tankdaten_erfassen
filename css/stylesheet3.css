@@ -76,3 +76,9 @@ button{
     padding-right: 10px;
 }
 
+#msg-area{
+    background-color: greenyellow;
+    width: 100%;
+    text-align: center;
+}
+
